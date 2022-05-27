@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NetAPI.Dtos;
 using NetAPI.Entidades;
 using System;
 using System.Collections.Generic;
@@ -9,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace NetAPI.Controllers
 {
+    [EnableCors("MyCors")]
     [ApiController]
-    [Route("api/autores")]
+    [Route("api/nota")]
     public class Notacontroller: ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -29,10 +32,23 @@ namespace NetAPI.Controllers
             return await context.Notas.ToListAsync();
         }
 
+        [HttpGet("last")]
+        public async Task<ActionResult<List<Nota>>> GetLast()
+        {
+            if (context.Notas.ToList().Count < 1)
+            {
+                return Ok();
+            }
+            return await context.Notas.OrderByDescending(nota=>nota.Id).Take(3).ToListAsync();
+        }
+
 
         [HttpPost]
-        public async Task<ActionResult> Post(Nota nota)
+        public async Task<ActionResult> Post(NotaDto notadt)
         {
+            var nota = mapper.Map<Nota>(notadt);
+
+            nota.Fecha = DateTime.UtcNow;
             context.Add(nota);
             await context.SaveChangesAsync();
             return Ok();
@@ -52,7 +68,6 @@ namespace NetAPI.Controllers
                 return NotFound();
 
             }
-
             context.Update(nota);
             await context.SaveChangesAsync();
             return Ok();
