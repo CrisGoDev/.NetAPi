@@ -17,6 +17,8 @@ namespace NetAPI
 {
     public class Startup
     {
+
+        private readonly string MyCors = "MyCors";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,6 +31,16 @@ namespace NetAPI
         {
 
             services.AddControllers();
+            services.AddCors(options=>
+            {
+                options.AddPolicy(name: MyCors, builder =>
+                {
+                    /*builder.WithOrigins("http://localhost:3000/");
+                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localHost").AllowAnyMethod().AllowAnyHeader();*/
+
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
 
             services.AddDbContext<ApplicationDbContext>(
                options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection"))
@@ -56,6 +68,8 @@ namespace NetAPI
 
             app.UseRouting();
 
+
+            app.UseCors(MyCors);
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

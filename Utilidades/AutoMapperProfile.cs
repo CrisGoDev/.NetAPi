@@ -12,7 +12,7 @@ namespace NetAPI.Utilidades
     {
         public AutoMapperProfile()
         {
-            CreateMap<Nota, NotaDto>();
+            CreateMap< NotaDto,Nota>();
         }
         
     }
