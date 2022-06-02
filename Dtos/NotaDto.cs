@@ -16,9 +16,4 @@ namespace NetAPI.Dtos
         public string Cuerpo { get; set; }
         public DateTime Fecha { get; set; }
     }
-
-    public class ObtenerDto
-    {
-
-    }
 }
